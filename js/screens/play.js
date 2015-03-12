@@ -10,7 +10,8 @@ game.PlayScreen = me.ScreenObject.extend({
                 var player = me.pool.pull("player", 0, 420, {}); //pulls player out of the pool and builds him as a variable
                 me.game.world.addChild(player, 5);
                 
-                me.input.bindKey(me.input.KEY.RIGHT, "right");
+                me.input.bindKey(me.input.KEY.RIGHT, "right");//binds right key to move right
+                me.input.bindKey(me.input.KEY.A, "attack");//binds A key to attack 
 		
                 // add our HUD to the game world
 		this.HUD = new game.HUD.Container();
