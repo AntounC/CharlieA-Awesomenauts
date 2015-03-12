@@ -2,7 +2,7 @@ game.PlayerEntity = me.Entity.extend({
     init: function(x, y, settings) {
         this._super(me.Entity, 'init', [x, y, {
                 image: "player", //loads image named "player" (named in resources.js)
-                width: 64, //Sets width to 64. //d
+                width: 64, //Sets width to 64. //:D :D :D :D :D :D :D :D
                 height: 64, //Sets height to 64.
                 spritewidth: "64", //draws from sprite and sets to 64
                 spriteheight: "64",
@@ -16,6 +16,7 @@ game.PlayerEntity = me.Entity.extend({
 
         this.renderable.addAnimation("idle", [78]);
         this.renderable.addAnimation("walk", [117, 118, 119, 120, 121, 122, 123, 124, 125], 80);
+        this.renderable.addAnimation("attack", [65, 66, 67, 68, 69, 70, 71, 72], 80);
 
         this.renderable.setCurrentAnimation("idle");
 
@@ -29,15 +30,24 @@ game.PlayerEntity = me.Entity.extend({
         } else {
             this.body.vel.x = 0;
         }
-
-        if (this.body.vel.x !== 0) {
+     if(me.input.isKeyPressed("attack")) {
+            if(!this.renderable.isCurrentAnimation("attack")) {
+                //sets current animation to attakc and once that is done 
+                //it goes back to the idle animation
+                this.renderable.setCurrentAnimation("attack", "idle");
+                //makes it so that next time we start this sequence of animation we start off 
+                //from the begining of the animation  instead of where we left off
+                this.renderable.setAnimationFrame();
+            }   
+        }  
+           
+    else if(this.body.vel.x !== 0) {
             if (!this.renderable.isCurrentAnimation("walk")) {
                 this.renderable.setCurrentAnimation("walk"); //says that  if not using walking animation, use walking animation
             }
         }else{
             this.renderable.setCurrentAnimation("idle");
         }
-        
         
 
         this.body.update(delta);
@@ -51,13 +61,13 @@ game.PlayerEntity = me.Entity.extend({
 game.PlayerBaseEntity = me.Entity.extend({
    init : function(x, y, settings) {
        this._super(me.Entity, 'init', [x, y, {
-           image: "tower",
+           image: "tower", 
            width: 100,
            height: 100,
            spritewidth: "100",
            spriteheight: "100", 
            getShape: function () {
-               return (new me.Rect(0, 0, 100, 100)).toPolygon();
+               return (new me.Rect(0, 0, 100, 70)).toPolygon();
            }
            
        }]);
@@ -100,7 +110,7 @@ game.EnemyBaseEntity = me.Entity.extend({
            spritewidth: "100",
            spriteheight: "100", 
            getShape: function () {
-               return (new me.Rect(0, 0, 100, 100)).toPolygon();
+               return (new me.Rect(0, 0, 100, 70)).toPolygon();
            }
            
        }]);
