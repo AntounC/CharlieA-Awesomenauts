@@ -11,6 +11,8 @@ game.PlayScreen = me.ScreenObject.extend({
                 me.game.world.addChild(player, 5);
                 
                 me.input.bindKey(me.input.KEY.RIGHT, "right");//binds right key to move right
+                me.input.bindKey(me.input.KEY.LEFT, "left");
+                me.input.bindKey(me.input.KEY.SPACE, "jump");
                 me.input.bindKey(me.input.KEY.A, "attack");//binds A key to attack 
 		
                 // add our HUD to the game world
