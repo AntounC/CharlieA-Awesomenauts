@@ -14,6 +14,9 @@ game.PlayerEntity = me.Entity.extend({
         this.body.setVelocity(5, 20); //sets movement speed
         this.facing = "right";
         //keeps track of which direction your chharacter is going :D
+        this.now = new Date().getTime();
+        this.lastHit = this.now();
+        this.lastAttack = new Date().getTime();
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
 
         this.renderable.addAnimation("idle", [78]);
@@ -24,6 +27,7 @@ game.PlayerEntity = me.Entity.extend({
 
     },
     update: function(delta) {
+        this.now = new Date().getTime();
         if (me.input.isKeyPressed("right")) {
             //sets position of x by adding the velocity defined aboove in set velocity and then 
             //multiplying it by me.timer.tick
@@ -57,13 +61,11 @@ game.PlayerEntity = me.Entity.extend({
             }
         }
 
-
-
-        else if (this.body.vel.x !== 0) {
+        else if (this.body.vel.x !== 0 && !this.renderable.isCurrentAnimation("attack")) {
             if (!this.renderable.isCurrentAnimation("walk")) {
                 this.renderable.setCurrentAnimation("walk"); //says that  if not using walking animation, use walking animation
             }
-        } else {
+        } else if(!this.renderable.isCurrentAnimation("attack")) {
             this.renderable.setCurrentAnimation("idle");
         }
 
@@ -78,7 +80,26 @@ game.PlayerEntity = me.Entity.extend({
     collideHandler: function(response) {
         if(response.b.type==='EnemyBaseEntity') {
             var ydif = this.pos.y - response.b.pos.y;
-            var xdif = this.pos.x
+            var xdif = this.pos.x - response.b.pos.x;
+            
+            if(ydif<-40 && xdif< 70 && xdif>-35) {
+                this.body.falling = false;
+                this.body.vel.y = -1;
+            }
+            
+            
+            
+            else if(xdif>-35 && this.facing==='right' && (xdif<0)) {
+                this.body.vel.x = 0;
+                this.pos.x = this.pos.x - 1;
+            }else if(xdif<60 && this.facing==='left' && xdif>0) {
+                this.body.vel.x = 0;
+                this.pos.x = this.pos.x +1;
+            }
+            
+            if(this.renderable.isCurrentAnimation("attack"))
+                response.b.loseHealth();
+            
         }
     }
 });
@@ -162,6 +183,11 @@ game.EnemyBaseEntity = me.Entity.extend({
     },
     onCollision: function() {
 
+    },
+    
+    loseHealth: function() {
+        this.health--;
     }
-
+    
+ 
 });
