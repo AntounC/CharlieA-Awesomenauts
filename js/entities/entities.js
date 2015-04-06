@@ -2,7 +2,7 @@ game.PlayerEntity = me.Entity.extend({
     init: function(x, y, settings) {
         this._super(me.Entity, 'init', [x, y, {
                 image: "player", //loads image named "player" (named in resources.js)
-                width: 64, //Sets width to 64. //:D :D :D :D :D :D :D :D
+                width: 64, //Sets width to 64. //:D
                 height: 64, //Sets height to 64.
                 spritewidth: "64", //draws from sprite and sets to 64
                 spriteheight: "64",
@@ -15,8 +15,8 @@ game.PlayerEntity = me.Entity.extend({
         this.facing = "right";
         //keeps track of which direction your chharacter is going :D
         this.now = new Date().getTime();
-        this.lastHit = this.now();
-        this.lastAttack = new Date().getTime();
+        this.lastHit = this.now;
+        this.lastAttack = new Date().getTime(); //Haven't used this yet
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
 
         this.renderable.addAnimation("idle", [78]);
@@ -96,8 +96,9 @@ game.PlayerEntity = me.Entity.extend({
                 this.body.vel.x = 0;
                 this.pos.x = this.pos.x +1;
             }
-            
-            if(this.renderable.isCurrentAnimation("attack"))
+            //chekcinig to see if its been 400 miliseconds since the last time the base was hit
+            if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= 1000)
+                this.lastHit = this.now; //once that has been checked it will update the last hit variable and say that this is the new time
                 response.b.loseHealth();
             
         }
@@ -190,4 +191,41 @@ game.EnemyBaseEntity = me.Entity.extend({
     }
     
  
+});
+
+game.EnemyCreep = me.Entity.extend({
+    init: function(x, y, settings){
+        this._super(me.Entity, 'init', [x, y, {
+            image: "creep1",
+            width: 32,
+            height: 64,
+            spritewidth: "32",
+            spriteheight: "64",
+            getSshape: function(){
+                return(new me.Rect(0, 0, 32, 64)).toPolygon();
+            }
+            
+        }]);
+        this.health = 10;
+        this.alwaysUpdate = true;
+        
+        this.setVelocity(3, 20);
+        
+        this.type ="EnemyCreep";
+        
+        this.renderable.addAnimation("walk", [3, 4, 5], 80);
+        this.renderable.setCurrentAnimation("walk");
+    
+    },
+    
+    update: function() {
+        
+    }
+    
+    
+});
+
+game.GameManager = Object.extend({
+    
+    
 });
