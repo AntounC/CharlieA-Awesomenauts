@@ -97,10 +97,10 @@ game.PlayerEntity = me.Entity.extend({
                 this.pos.x = this.pos.x +1;
             }
             //chekcinig to see if its been 400 miliseconds since the last time the base was hit
-            if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= 1000)
+            if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= 1000){
                 this.lastHit = this.now; //once that has been checked it will update the last hit variable and say that this is the new time
                 response.b.loseHealth();
-            
+            }
         }
     }
 });
@@ -209,7 +209,7 @@ game.EnemyCreep = me.Entity.extend({
         this.health = 10;
         this.alwaysUpdate = true;
         
-        this.setVelocity(3, 20);
+        this.body.setVelocity(3, 20);
         
         this.type ="EnemyCreep";
         
@@ -218,14 +218,40 @@ game.EnemyCreep = me.Entity.extend({
     
     },
     
-    update: function() {
+    update: function(delta) {
+        this.body.vel.x -= this.accel.x * me.timer.tick;
         
+        
+        this.body.update(delta);
+        
+        
+        this._super(me.Entity, "update", [delta]);
+        
+        return true;
     }
     
     
 });
 
 game.GameManager = Object.extend({
+    init: function(x, y, settings) {
+        this.now = new Date().getTime();
+        this.lastCreep   = new Date().getTime();
+        
+        this.alwaysUpdate = true;
+    },
     
+    update: function(){
+        this.now = new Date().getTime();
+        
+        if(Math.round(this.now/1000)%10 ===0 && (this.now - this.lastCreep >= 1000)){
+            this.lastCreep = this.now;
+            var creep = me.pool.pull("EnemyCreep", 1000, 0, {});
+            me.game.world.addChild(creep, 5);
+            
+        }
+        
+        return true;
+    }
     
 });
