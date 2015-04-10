@@ -11,12 +11,13 @@ game.PlayerEntity = me.Entity.extend({
                 }
             }]);
         this.type = "PlayerEntity";
-        this.health = 20;
-        this.body.setVelocity(5, 20); //sets movement speed
+        this.health = game.data.playerHealth;
+        this.body.setVelocity(game.data.playerMoveSpeed, 20); //sets movement speed
         this.facing = "right";
         //keeps track of which direction your chharacter is going :D
         this.now = new Date().getTime();
         this.lastHit = this.now;
+        this.dead = false;
         this.lastAttack = new Date().getTime(); //Haven't used this yet
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
 
@@ -29,6 +30,14 @@ game.PlayerEntity = me.Entity.extend({
     },
     update: function(delta) {
         this.now = new Date().getTime();
+        
+        if (this.health <= 0){
+            this.dead = true;
+            this.pos.x = 10;
+            this.pos.y = 0;
+            this.health = game.data.playerHealth;
+        }
+        
         if (me.input.isKeyPressed("right")) {
             //sets position of x by adding the velocity defined aboove in set velocity and then 
             //multiplying it by me.timer.tick
@@ -98,15 +107,15 @@ game.PlayerEntity = me.Entity.extend({
             
             else if(xdif>-35 && this.facing==='right' && (xdif<0)) {
                 this.body.vel.x = 0;
-                this.pos.x = this.pos.x - 1;
+                //this.pos.x = this.pos.x - 1;
             }else if(xdif<60 && this.facing==='left' && xdif>0) {
                 this.body.vel.x = 0;
-                this.pos.x = this.pos.x +1;
+                //this.pos.x = this.pos.x +1;
             }
             //chekcinig to see if its been 400 miliseconds since the last time the base was hit
-            if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= 1000){
+            if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= game.data.playerAttackTimer){
                 this.lastHit = this.now; //once that has been checked it will update the last hit variable and say that this is the new time
-                response.b.loseHealth();
+                response.b.loseHealth(game.data.playerAttack);
             }
         }else if(response.b.type==='EnemyCreep'){
             var xdif = this.pos.x - response.b.pos.x;
@@ -118,18 +127,18 @@ game.PlayerEntity = me.Entity.extend({
                     this.body.vel.x = 0;
                 }
             }else{
-                this.pos.x = this.pos.x - 1;
+               // this.pos.x = this.pos.x - 1;
                 if(this.facing==="right"){
                     this.body.vel.x = 0;
                 }
             }
             
-            if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= 1000
+            if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= game.data.playerAttackTimer
                     && (Math.abs(ydif) <=40) && 
                     (((xdif>0) && this.facing==="left") || ((xdif<0) && this.facing==="right"))
                     ){
                 this.lastHit = this.now;    
-                response.b.loseHealth(1);
+                response.b.loseHealth(game.data.playerAttack);
             }
         }
     }
@@ -150,7 +159,7 @@ game.PlayerBaseEntity = me.Entity.extend({
             }]);
 
         this.broken = false; //states the base is not broken when started
-        this.health = 10; //makes healtth for base 10
+        this.health = game.data.playerBaseHealth; //makes healtth for base 10
         this.alwaysUpdate = true; //states that even if the base is not within screen sight, it is still constantly updating
         this.body.onCollision = this.onCollision.bind(this); //checks for collisions within the PlayerEntityBase
         this.type = "PlayerBase";
@@ -196,7 +205,7 @@ game.EnemyBaseEntity = me.Entity.extend({
             }]);
 
         this.broken = false; //states the base is not broken when started
-        this.health = 10; //makes healtth f or base 10
+        this.health = game.data.enemyBaseHealth; //makes health of or base 10
         this.alwaysUpdate = true; //states that even if the base is not within screen sight, it is still constantly updating
         this.body.onCollision = this.onCollision.bind(this); //checks for collisions within the PlayerEntityBase
 
@@ -240,7 +249,7 @@ game.EnemyCreep = me.Entity.extend({
                 }
 
             }]);
-        this.health = 10;
+        this.health = game.data.enemyCreepHealth;
         this.alwaysUpdate = true;
         //this.attacking lets us know whether or not the creep is attacking
         this.attacking = false;
@@ -281,7 +290,7 @@ game.EnemyCreep = me.Entity.extend({
         this._super(me.Entity, "update", [delta]);
 
         return true;
-    },
+    },  
     collideHandler: function(response) {
         if (response.b.type === 'PlayerBase') {
             this.attacking = true;
@@ -294,7 +303,7 @@ game.EnemyCreep = me.Entity.extend({
                 //updates the last hit timer
                 this.lastHit = this.now;
                 //makes the base call its lose health function and passes it a damage of 1
-                response.b. loseHealth(1);
+                response.b. loseHealth(game.data.enemyCreepAttack);
             }
         } else if (response.b.type === 'PlayerEntity') {
             var xdif = this.pos.x - response.b.pos.x;
@@ -313,7 +322,7 @@ game.EnemyCreep = me.Entity.extend({
                 //updates the last hit timer
                 this.lastHit = this.now;
                 //makes the base call its lose health function and passes it a damage of 1
-                response.b.loseHealth(1);
+                response.b.loseHealth(game.data.enemyCreepAttack);
             }
         }
     }
