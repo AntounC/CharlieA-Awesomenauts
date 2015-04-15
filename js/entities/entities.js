@@ -1,6 +1,23 @@
 game.PlayerEntity = me.Entity.extend({
     init: function(x, y, settings) {
-        this._super(me.Entity, 'init', [x, y, {
+        this.setSuper();
+        this.setPlayerTimers();
+        this.setAttributes();
+        this.type = "PlayerEntity";
+        this. setFlags(); 
+        
+        
+        
+        me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
+        
+        this.addAnimation();
+
+        this.renderable.setCurrentAnimation("idle");
+
+    },
+    //refactored init function                                        
+    setSuper: function(){
+      this._super(me.Entity, 'init', [x, y, {
                 image: "player", //loads image named "player" (named in resources.js)
                 width: 64, //Sets width to 64. //:D
                 height: 64, //Sets height to 64.
@@ -9,57 +26,89 @@ game.PlayerEntity = me.Entity.extend({
                 getShape: function() {
                     return(new me.Rect(0, 0, 64, 64)).toPolygon();
                 }
-            }]);
-        this.type = "PlayerEntity";
-        this.health = game.data.playerHealth;
-        this.body.setVelocity(game.data.playerMoveSpeed, 20); //sets movement speed
-        this.facing = "right";
-        //keeps track of which direction your chharacter is going :D
+            }]);  
+    },
+    
+    setPlayerTimers: function(){
         this.now = new Date().getTime();
         this.lastHit = this.now;
-        this.dead = false;
-        this.attack = game.data.playerAttack;
         this.lastAttack = new Date().getTime(); //Haven't used this yet
-        me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
-
+    },
+    
+    setAttributes: function(){
+        this.health = game.data.playerHealth;
+        this.body.setVelocity(game.data.playerMoveSpeed, 20); //sets movement speed to 20
+        this.attack = game.data.playerAttack; //links this.attack to playerAttack set in game.js
+    },
+    
+    setFlags: function(){
+        this.facing = "right"; //keeps track of which direction your chharacter is going :D
+        this.dead = false;
+        this.attacking = false;
+    },
+    
+    addAnimation: function(){
         this.renderable.addAnimation("idle", [78]);
         this.renderable.addAnimation("walk", [117, 118, 119, 120, 121, 122, 123, 124, 125], 80);
-        this.renderable.addAnimation("attack", [65, 66, 67, 68, 69, 70, 71, 72], 80);
-
-        this.renderable.setCurrentAnimation("idle");
-
+        this.renderable.addAnimation("attack", [65, 66, 67, 68, 69, 70, 71, 72], 80);  
     },
+    
     update: function(delta) {
         this.now = new Date().getTime();
-        
-        if (this.health <= 0){
-            this.dead = true;
+        this.dead = checkIfDead();
+        this.checkKeyPressesAndMove();
+        this.setAnimation();
+        me.collision.check(this, true, this.collideHandler.bind(this), true);
+        this.body.update(delta);
+        this._super(me.Entity, "update", [delta]);
+        return true;
+    },
+    
+    checkIfDead: function(){
+      if (this.health <= 0){
+            return true;
             //states that if health is less than or equal to zero, then the player is dead.
         }
-        
+        return false;
+    },
+    
+    checkKeyPressesAndMove: function(){
         if (me.input.isKeyPressed("right")) {
-            //sets position of x by adding the velocity defined aboove in set velocity and then 
-            //multiplying it by me.timer.tick
-            this.body.vel.x += this.body.accel.x * me.timer.tick; //me.timer.tick makes movement look smooth
-            this.facing = "right";
-            this.flipX(true); //Se  ts orc to walk to the right instead of the left
+            this.moveRight();
         } else if (me.input.isKeyPressed("left")) {
-            this.facing = "left";
-            this.body.vel.x -= this.body.accel.x * me.timer.tick;
-            this.flipX(false);
+            this.moveLeft();
         } else {
             this.body.vel.x = 0;
         }
 
         if (me.input.isKeyPressed("jump") && !this.body.jumping && !this.body.falling) {
-            this.body.jumping = true;
-            this.body.vel.y -= this.body.accel.y * me.timer.tick;
+            this.jump();
         }
-
-
-
-
-        if (me.input.isKeyPressed("attack")) {
+        
+        this.attack = me.input.isKeyPressed("attack");
+    },
+    
+    moveRight: function(){
+        //sets position of x by adding the velocity defined aboove in set velocity and then 
+            //multiplying it by me.timer.tick
+            this.body.vel.x += this.body.accel.x * me.timer.tick; //me.timer.tick makes movement look smooth
+            this.facing = "right";
+            this.flipX(true); //Se  ts orc to walk to the right instead of the left
+    },
+    
+    moveLeft: function(){
+        this.facing = "left";
+            this.body.vel.x -= this.body.accel.x * me.timer.tick;
+            this.flipX(false);
+    },
+    
+    jump: function(){
+        this.body.jumping = true;
+        this.body.vel.y -= this.body.accel.y * me.timer.tick;
+    },
+    
+    setAnimation: function(){
+        if (this.attacking) {
             if (!this.renderable.isCurrentAnimation("attack")) {
                 //sets current animation to attakc and once that is done 
                 //it goes back to the idle animation
@@ -77,13 +126,6 @@ game.PlayerEntity = me.Entity.extend({
         } else if(!this.renderable.isCurrentAnimation("attack")) {
             this.renderable.setCurrentAnimation("idle");
         }
-
-        me.collision.check(this, true, this.collideHandler.bind(this), true);
-        this.body.update(delta);
-
-        this._super(me.Entity, "update", [delta]);
-
-        return true;
     },
     
     loseHealth: function(damage){
