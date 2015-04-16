@@ -1,6 +1,6 @@
 game.PlayerEntity = me.Entity.extend({
     init: function(x, y, settings) {
-        this.setSuper();
+        this.setSuper(x, y);
         this.setPlayerTimers();
         this.setAttributes();
         this.type = "PlayerEntity";
@@ -16,7 +16,7 @@ game.PlayerEntity = me.Entity.extend({
 
     },
     //refactored init function                                        
-    setSuper: function(){
+    setSuper: function(x, y){
       this._super(me.Entity, 'init', [x, y, {
                 image: "player", //loads image named "player" (named in resources.js)
                 width: 64, //Sets width to 64. //:D
@@ -55,7 +55,7 @@ game.PlayerEntity = me.Entity.extend({
     
     update: function(delta) {
         this.now = new Date().getTime();
-        this.dead = checkIfDead();
+        this.dead = this.checkIfDead();
         this.checkKeyPressesAndMove();
         this.setAnimation();
         me.collision.check(this, true, this.collideHandler.bind(this), true);
@@ -133,10 +133,16 @@ game.PlayerEntity = me.Entity.extend({
       console.log(this.health);
     },
     
-    
-    collideHandler: function(response) {
+    collideHandler: function(xdif) {
         if(response.b.type==='EnemyBaseEntity') {   
-            var ydif = this.pos.y - response.b.pos.y;
+            this.collideWithEnemyBase(response);
+        }else if(response.b.type==='EnemyCreep'){
+            this.collideWithEnemyCreep(response);
+        }
+    },
+    
+    collideWithEnemyBase: function(response){
+        var ydif = this.pos.y - response.b.pos.y;
             var xdif = this.pos.x - response.b.pos.x;
             
             if(ydif<-40 && xdif< 70 && xdif>-35) {
@@ -148,47 +154,61 @@ game.PlayerEntity = me.Entity.extend({
             
             else if(xdif>-35 && this.facing==='right' && (xdif<0)) {
                 this.body.vel.x = 0;
-                //this.pos.x = this.pos.x - 1;
             }else if(xdif<60 && this.facing==='left' && xdif>0) {
                 this.body.vel.x = 0;
-                //this.pos.x = this.pos.x +1;
             }
             //chekcinig to see if its been 400 miliseconds since the last time the base was hit
             if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= game.data.playerAttackTimer){
                 this.lastHit = this.now; //once that has been checked it will update the last hit variable and say that this is the new time
                 response.b.loseHealth(game.data.playerAttack);
             }
-        }else if(response.b.type==='EnemyCreep'){
-            var xdif = this.pos.x - response.b.pos.x;
+    },
+    
+    collideWithEnemyCreep: function(response){
+        var xdif = this.pos.x - response.b.pos.x;
             var ydif = this.pos.y - response.b.pos.y;
             
-            if (xdif>0){
+            this.stopMovement(response);
+            
+            if(this.checkAttack(xdif, ydif)){
+                this.hitCreep(response);
+            };
+            
+    },
+    
+    stopMovement: function(xdif){
+        if (xdif>0){
                 this.pos.x = this.pos.x + 1;
                 if(this.facing==="left"){
                     this.body.vel.x = 0;
                 }
             }else{
-               // this.pos.x = this.pos.x - 1;
                 if(this.facing==="right"){
                     this.body.vel.x = 0;
                 }
             }
-            
-            if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= game.data.playerAttackTimer
+    },
+    
+    checkAttack: function(xdif, ydif, response){
+        if(this.renderable.isCurrentAnimation("attack") && this.now-this.lastHit >= game.data.playerAttackTimer
                     && (Math.abs(ydif) <=40) && 
                     (((xdif>0) && this.facing==="left") || ((xdif<0) && this.facing==="right"))
                     ){
                 this.lastHit = this.now;    
                 //if the creeps health is lower than our attack, then execute code in if statement
-                if(response.b.health <= game.data.playerAttack){
+                return true;
+        }
+        return false;
+    },
+    
+    hitCreep: function(response){
+        if(response.b.health <= game.data.playerAttack){
                     //adds one gold for every creep kill
                     game.data.gold += 1;
                     console.log("Current gold: " + game.data.gold);
                 }
                 
                 response.b.loseHealth(game.data.playerAttack);
-            }
-        }
     }
-});
+}); 
 
