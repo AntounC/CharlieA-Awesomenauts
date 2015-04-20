@@ -5,25 +5,25 @@ game.TitleScreen = me.ScreenObject.extend({
 	onResetEvent: function() {	
 		me.game.world.addChild(new me.Sprite(0, 0, me.loader.getImage('title-screen')), -10);
                 
-                me.input.bindKey(me.input.KEY.ENTER, "start");
-                
                 me.game.world.addChild(new (me.Renderable.extend({
                     init: function(){
-                      this._super(me.Renderable, 'init', [510, 30, me.game.viewport.width, me.game.viewport.height]);  
+                      this._super(me.Renderable, 'init', [270, 240, 300, 50]);  
                       this.font = new me.Font("Arial", 46, "white");
+                      me.input.registerPointerEvent('pointerdown', this, this.newGame(this), true);
                     },
                     
                     draw: function(renderer){
-                        this.font.draw(renderer.getContext(), "Awesomenauts :D", 450, 130);
-                        this.font.draw(renderer.getContext(), "Press ENTER to Play!", 250, 530);
+                        this.font.draw(renderer.getContext(), "START A NEW GAME :D :D", this.pos.x, this.pos.y);
+                    },
+                    
+                    update: function(dt){
+                        return true;
+                    },
+                    
+                    newGame: function(){
+                        me.input.releasePointerEvent('');
                     }
                 })));
-                
-                this.handler = me.event.subscribe(me.event.KEYDOWN, function (action, keyCode, edge){
-                    if(action === "start"){
-                        me.state.change(me.state.PLAY);
-                    }
-                });
                 
 	},
 	
