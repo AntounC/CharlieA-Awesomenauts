@@ -7,12 +7,13 @@ game.SpendExp = me.ScreenObject.extend({
                 
                 me.game.world.addChild(new (me.Renderable.extend({
                     init: function(){
-                      this._super(me.Renderable, 'init', [270, 240, 300, 50]);  
+                      this._super(me.Renderable, 'init', [10, 10, 300, 50]);  
                       this.font = new me.Font("Arial", 46, "white");
                     },
                     
                     draw: function(renderer){
-                        this.font.draw(renderer.getContext(), "SPEND DAT EXP M8", this.pos.x, this.pos.y);
+                        this.font.draw(renderer.getContext(), "PRESS F1-F4 TO BUY, F5 TO SKIP", this.pos.x, this.pos.y);
+                        this.font.draw(renderer.getContext(), "CURRENT EXP: " + game.data.exp.toString(), this.pos.x + 100, this.pos.y + 50);
                     },
                     
                     update: function(dt){
@@ -29,7 +30,6 @@ game.SpendExp = me.ScreenObject.extend({
 	 *  action to perform when leaving this screen (state change)
 	 */
 	onDestroyEvent: function() {
-		me.input.unbindKey(me.input.KEY.ENTER);
-                me.event.unsubscribe(this.handler);
+		
 	}
 });
