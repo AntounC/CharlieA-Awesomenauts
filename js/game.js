@@ -2,7 +2,7 @@
 /* Game namespace */
 var game = {
 
-	// an object where to store game information
+	// stores game information that can be used in other parts of the code
 	data : {
 		// score
 		score : 0,
@@ -29,8 +29,9 @@ var game = {
                 exp2: 0,
                 exp3: 0,
                 exp4: 0,
-                win: "  "
-                
+                win: " ",
+                pausePos: "",
+                buyscreen: ""
 	},
 	
 	

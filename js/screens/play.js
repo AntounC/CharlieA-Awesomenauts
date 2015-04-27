@@ -18,6 +18,8 @@ game.PlayScreen = me.ScreenObject.extend({
                 var experienceManager = me.pool.pull("ExperienceManager", 0, {});
                 me.game.world.addChild(experienceManager, 0);
                 
+                me.input.bindKey(me.input.KEY.B, "buy");
+                me.input
                 me.input.bindKey(me.input.KEY.RIGHT, "right");//binds right key to move right
                 me.input.bindKey(me.input.KEY.LEFT, "left");
                 me.input.bindKey(me.input.KEY.SPACE, "jump");
