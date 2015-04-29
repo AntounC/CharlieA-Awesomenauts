@@ -5,7 +5,7 @@ game.PlayScreen = me.ScreenObject.extend({
 	onResetEvent: function() {
 		// reset the score
 		game.data.score = 0;
-                //me.levelDirector.loadLevel("level01"); //loads the first level 
+                me.levelDirector.loadLevel("level01"); //loads the first level 
                 
                 this.resetPlayer(0, 420);
                 
@@ -21,13 +21,13 @@ game.PlayScreen = me.ScreenObject.extend({
                 var spendGold = me.pool.pull("SpendGold", 0, 0, {});
                 me.game.world.addChild(spendGold, 0);
                 
-                me.input.bindKey(me.input.KEY.B, "buy");
-                me.input.bindKey(me.input.KEY.Q, "skill1");
-                me.input.bindKey(me.input.KEY.W, "skill2");
-                me.input.bindKey(me.input.KEY.E, "skill3");
+                me.input.bindKey(me.input.KEY.B, "buy");//binds B to buy
+                me.input.bindKey(me.input.KEY.Q, "skill1");//binds Q to skill 1
+                me.input.bindKey(me.input.KEY.W, "skill2");//binds W to skill 2
+                me.input.bindKey(me.input.KEY.E, "skill3");//binds E to skill 3
                 me.input.bindKey(me.input.KEY.RIGHT, "right");//binds right key to move right
-                me.input.bindKey(me.input.KEY.LEFT, "left");
-                me.input.bindKey(me.input.KEY.SPACE, "jump");
+                me.input.bindKey(me.input.KEY.LEFT, "left");//binds left key to move left
+                me.input.bindKey(me.input.KEY.SPACE, "jump");//binds spacebar to jump
                 me.input.bindKey(me.input.KEY.A, "attack");//binds A key to attack 
 		
                 // add our HUD to the game world

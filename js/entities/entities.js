@@ -42,7 +42,7 @@ game.PlayerEntity = me.Entity.extend({
     },
     
     setFlags: function(){
-        this.facing = "right"; //keeps track of which direction your chharacter is going :D
+        this.facing = "right"; //keeps track of which direction your character is going :D
         this.dead = false;
         this.attacking = false;
     },
@@ -108,7 +108,7 @@ game.PlayerEntity = me.Entity.extend({
     },
     
     setAnimation: function(){
-        if (this.attacking) {
+        if (this.attacking) { //states that if we attack, the attack animation is triggered 
             if (!this.renderable.isCurrentAnimation("attack")) {
                 //sets current animation to attakc and once that is done 
                 //it goes back to the idle animation
@@ -129,14 +129,14 @@ game.PlayerEntity = me.Entity.extend({
     },
     
     loseHealth: function(damage){
-      this.health = this.health - damage;
+      this.health = this.health - damage;//states that health is depleted by damage
       console.log(this.health);
     },
     
-    collideHandler: function(xdif) {
-        if(response.b.type==='EnemyBaseEntity') {   
+    collideHandler: function(response) {
+        if(response.b.type === 'EnemyBaseEntity') {   
             this.collideWithEnemyBase(response);
-        }else if(response.b.type==='EnemyCreep'){
+        }else if(response.b.type === 'EnemyCreep'){
             this.collideWithEnemyCreep(response);
         }
     },
@@ -202,7 +202,7 @@ game.PlayerEntity = me.Entity.extend({
     },
     
     hitCreep: function(response){
-        if(response.b.health <= game.data.playerAttack){
+        if(response.b.health <= game.data.playerAttack){ //states that if the creep is hit then the following code is executed
                     //adds one gold for every creep kill
                     game.data.gold += 1;
                     console.log("Current gold: " + game.data.gold);
