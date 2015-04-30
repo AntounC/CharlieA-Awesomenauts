@@ -3,17 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/php/controller/save-user.php</file>
             <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/index.php</file>
-            <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/js/entities/EnemyCreep.js</file>
-            <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/js/entities/GameManager.js</file>
-            <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/js/entities/EnemyBaseEntity.js</file>
+            <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/index.css</file>
             <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/js/screens/title.js</file>
             <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/js/resources.js</file>
             <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/js/screens/play.js</file>
-            <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/js/entities/entities.js</file>
-            <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/js/entities/PlayerBaseEntity.js</file>
+            <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/js/gamemanagers/GameManager.js</file>
             <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/js/screens/spendExp.js</file>
-            <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/js/game.js</file>
+            <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/php/controller/login-user.php</file>
+            <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/php/controller/create-user.php</file>
+            <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/js/gamemanagers/GameTimerManager.js</file>
+            <file>file:/C:/xampp/htdocs/CharlieAAwesomenauts/js/screens/loadProfile.js</file>
         </group>
     </open-files>
 </project-private>
